@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TiendaUrbanaAPI.Data;
 using TiendaUrbanaAPI.Models;
@@ -42,6 +42,18 @@ namespace TiendaUrbanaAPI.Controllers
         public async Task<ActionResult<IEnumerable<Usuario>>> GetUsuarios()
         {
             return await _context.Usuarios.ToListAsync();
+        }
+
+        // NUEVO: CREAR UN CLIENTE EXPRESS DESDE EL FRONTEND
+        [HttpPost]
+        public async Task<ActionResult<Usuario>> CrearUsuario(Usuario usuario)
+        {
+            // El Frontend enviará un JSON con "Nombre", "Email", etc.
+            _context.Usuarios.Add(usuario);
+            await _context.SaveChangesAsync();
+
+            // Retorna el usuario recién creado (incluyendo el ID autogenerado)
+            return CreatedAtAction("GetUsuarios", new { id = usuario.Id }, usuario);
         }
     }
 }
